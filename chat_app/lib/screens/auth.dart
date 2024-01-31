@@ -22,6 +22,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _enteredPassword = '';
   File? _selectedImage;
   var isAuthenticating = false;
+  var _enteredUserName = '';
 
   void _submit() async {
     var isValid = _form.currentState!.validate();
@@ -52,12 +53,12 @@ class _AuthScreenState extends State<AuthScreen> {
             .child('${userCredentials.user!.uid}.jpg');
         await storageRef.putFile(_selectedImage!);
         final imageUrl = await storageRef.getDownloadURL();
-        
+
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userCredentials.user!.uid)
             .set({
-          'username': 'to be done ...',
+          'username': _enteredUserName,
           'email': _enteredEmail,
           'image_url': imageUrl,
         });
@@ -127,6 +128,23 @@ class _AuthScreenState extends State<AuthScreen> {
                             },
                             onSaved: (newValue) => _enteredEmail = newValue!,
                           ),
+                          if (!isLogin)
+                            TextFormField(
+                              decoration:
+                                  const InputDecoration(labelText: 'Username'),
+                              enableSuggestions: false,
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value.trim().length < 4) {
+                                  return 'Please enter at least 4 characters';
+                                }
+                                return null;
+                              },
+                              onSaved: (newValue) {
+                                _enteredUserName = newValue!;
+                              },
+                            ),
                           TextFormField(
                             decoration: const InputDecoration(
                               labelText: 'Password',
