@@ -22,6 +22,8 @@ class _AuthScreenState extends State<AuthScreen> {
     if (!isValid) {
       return;
     }
+    _form.currentState!.save();
+
     try {
       if (isLogin) {
         final userCredentials = await _firebase.signInWithEmailAndPassword(
@@ -43,9 +45,6 @@ class _AuthScreenState extends State<AuthScreen> {
           content: Text(e.message ?? 'Authentication failed'),
         ),
       );
-    }
-    if (isValid) {
-      _form.currentState!.save();
     }
   }
 
